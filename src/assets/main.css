@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+@theme {
+  --color-dark: #0f172a;
+  --color-darker: #020617;
+  --color-card: #1e293b;
+  --color-primary: #06b6d4;
+  --color-secondary: #8b5cf6;
+
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+body {
+  background-color: #020617;
+  color: #f8fafc;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* 卡片悬浮发光效果 */
+.glass-card {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+.glass-card:hover {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 10px 40px -10px rgba(6, 182, 212, 0.1);
+}
+
+/* 页面切换动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 新增：弹窗动画 */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
