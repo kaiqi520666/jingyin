@@ -93,10 +93,11 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const store = useUserStore()
 const router = useRouter()
+const route = useRoute()
 
 // 控制当前所处模式 (登录 or 注册)
 const isLoginMode = ref(true)
@@ -123,7 +124,13 @@ const handleSubmit = () => {
 
     // 执行登录并跳转
     store.login(form.username)
-    router.push('/dashboard')
+    // 👇 只在这里处理 redirect
+    const redirect =
+      typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/')
+        ? route.query.redirect
+        : '/dashboard'
+
+    router.replace(redirect)
   }
 }
 </script>

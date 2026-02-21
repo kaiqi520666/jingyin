@@ -70,126 +70,96 @@
           </div>
           <button
             @click="openDetails(record)"
-            class="text-sm text-slate-400 hover:text-white underline decoration-slate-600 hover:decoration-primary underline-offset-4 transition-all"
+            class="text-sm px-4 py-2 bg-slate-800/60 hover:bg-primary/20 text-slate-300 hover:text-primary rounded-lg border border-slate-700 hover:border-primary/30 transition-all flex items-center gap-2 shadow-sm hover:shadow-md hover:shadow-primary/10"
           >
-            查看详情
+            <i class="ph ph-eye text-xs"></i>
+            <span>查看详情</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- 新增：详情弹窗 (Modal) -->
-    <transition name="modal">
-      <div
-        v-if="isModalOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0"
-      >
-        <!-- 遮罩层 -->
-        <div class="absolute inset-0 bg-darker/80 backdrop-blur-sm" @click="closeModal"></div>
-
-        <!-- 弹窗内容 -->
+    <!-- 使用 BaseModel 组件展示详情弹窗 -->
+    <BaseModel
+      v-model="isModalOpen"
+      title="检索详情报告"
+      :reportId="`#EQ-${recordHash}`"
+      @close="handleModalClose"
+    >
+      <!-- 详情内容 -->
+      <div v-if="selectedRecord" class="space-y-4">
+        <!-- 核心摘要 -->
         <div
-          class="glass-card w-full max-w-lg rounded-3xl p-6 md:p-8 relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-slate-600/50"
+          class="flex justify-between items-center bg-linear-to-r from-slate-900 to-slate-800 p-5 rounded-xl border border-slate-700 shadow-inner"
         >
-          <!-- 关闭按钮 -->
-          <button
-            @click="closeModal"
-            class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 p-2 rounded-full transition-colors border border-slate-700"
+          <div>
+            <p class="text-xs text-slate-400 mb-1"><i class="ph ph-target"></i> 目标车牌</p>
+            <p class="text-2xl font-mono font-bold text-primary tracking-wider">
+              {{ selectedRecord.plate }}
+            </p>
+          </div>
+          <div class="text-right">
+            <p class="text-xs text-slate-400 mb-1">系统评定状态</p>
+            <span
+              class="text-sm px-2.5 py-1 rounded border font-medium"
+              :class="selectedRecord.statusClass"
+              >{{ selectedRecord.status }}</span
+            >
+          </div>
+        </div>
+
+        <!-- 详情网格 -->
+        <div class="grid grid-cols-2 gap-3">
+          <div
+            class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 hover:bg-slate-800/60 transition-colors"
           >
-            <i class="ph ph-x text-lg"></i>
-          </button>
-
-          <!-- 标题 -->
-          <div class="flex items-center gap-3 mb-6 border-b border-slate-700/50 pb-4">
-            <div
-              class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/30 shadow-inner"
-            >
-              <i class="ph ph-files text-xl"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-bold text-white">检索详情报告</h3>
-              <p class="text-xs text-slate-400 font-mono mt-0.5">Report ID: #EQ-{{ recordHash }}</p>
-            </div>
+            <p class="text-xs text-slate-500 mb-1">
+              <i class="ph ph-calendar-blank"></i> 违章发生时间
+            </p>
+            <p class="text-sm text-slate-200 font-medium">{{ selectedRecord.incidentTime }}</p>
           </div>
-
-          <!-- 详情内容 -->
-          <div v-if="selectedRecord" class="space-y-4">
-            <!-- 核心摘要 -->
-            <div
-              class="flex justify-between items-center bg-linear-to-r from-slate-900 to-slate-800 p-5 rounded-xl border border-slate-700 shadow-inner"
-            >
-              <div>
-                <p class="text-xs text-slate-400 mb-1"><i class="ph ph-target"></i> 目标车牌</p>
-                <p class="text-2xl font-mono font-bold text-primary tracking-wider">
-                  {{ selectedRecord.plate }}
-                </p>
-              </div>
-              <div class="text-right">
-                <p class="text-xs text-slate-400 mb-1">系统评定状态</p>
-                <span
-                  class="text-sm px-2.5 py-1 rounded border font-medium"
-                  :class="selectedRecord.statusClass"
-                  >{{ selectedRecord.status }}</span
-                >
-              </div>
-            </div>
-
-            <!-- 详情网格 -->
-            <div class="grid grid-cols-2 gap-3">
-              <div
-                class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 hover:bg-slate-800/60 transition-colors"
-              >
-                <p class="text-xs text-slate-500 mb-1">
-                  <i class="ph ph-calendar-blank"></i> 违章发生时间
-                </p>
-                <p class="text-sm text-slate-200 font-medium">{{ selectedRecord.incidentTime }}</p>
-              </div>
-              <div
-                class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 hover:bg-slate-800/60 transition-colors"
-              >
-                <p class="text-xs text-slate-500 mb-1">
-                  <i class="ph ph-warning-circle"></i> 违章类型
-                </p>
-                <p class="text-sm text-slate-200 font-medium">{{ selectedRecord.type }}</p>
-              </div>
-              <div
-                class="col-span-2 bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 hover:bg-slate-800/60 transition-colors"
-              >
-                <p class="text-xs text-slate-500 mb-1">
-                  <i class="ph ph-map-pin"></i> 发生地点坐标
-                </p>
-                <p class="text-sm text-slate-200 font-medium">{{ selectedRecord.location }}</p>
-              </div>
-              <div
-                class="col-span-2 bg-slate-900/80 p-4 rounded-xl border border-slate-700 shadow-inner"
-              >
-                <p class="text-xs text-slate-500 mb-1 flex items-center gap-1">
-                  <i class="ph ph-link"></i> 证据链哈希 (IPFS)
-                </p>
-                <p class="text-xs font-mono text-slate-400 break-all leading-relaxed">
-                  0x{{ Math.random().toString(16).substr(2, 40) }}...
-                </p>
-              </div>
-            </div>
+          <div
+            class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 hover:bg-slate-800/60 transition-colors"
+          >
+            <p class="text-xs text-slate-500 mb-1"><i class="ph ph-warning-circle"></i> 违章类型</p>
+            <p class="text-sm text-slate-200 font-medium">{{ selectedRecord.type }}</p>
           </div>
-
-          <div class="mt-8">
-            <button
-              @click="closeModal"
-              class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-600 hover:border-slate-500 shadow-lg"
-            >
-              关闭报告
-            </button>
+          <div
+            class="col-span-2 bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 hover:bg-slate-800/60 transition-colors"
+          >
+            <p class="text-xs text-slate-500 mb-1"><i class="ph ph-map-pin"></i> 发生地点坐标</p>
+            <p class="text-sm text-slate-200 font-medium">{{ selectedRecord.location }}</p>
+          </div>
+          <div
+            class="col-span-2 bg-slate-900/80 p-4 rounded-xl border border-slate-700 shadow-inner"
+          >
+            <p class="text-xs text-slate-500 mb-1 flex items-center gap-1">
+              <i class="ph ph-link"></i> 证据链哈希 (IPFS)
+            </p>
+            <p class="text-xs font-mono text-slate-400 break-all leading-relaxed">
+              0x{{ Math.random().toString(16).substr(2, 40) }}...
+            </p>
           </div>
         </div>
       </div>
-    </transition>
+
+      <!-- 自定义底部按钮 -->
+      <template #footer>
+        <button
+          @click="isModalOpen = false"
+          class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-600 hover:border-slate-500 shadow-lg"
+        >
+          关闭报告
+        </button>
+      </template>
+    </BaseModel>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
+import BaseModel from '@/components/BaseModel.vue'
 
 const store = useUserStore()
 // 模拟的历史记录数据
@@ -247,6 +217,10 @@ const openDetails = (record) => {
 // 关闭弹窗
 const closeModal = () => {
   isModalOpen.value = false
+}
+
+// 处理弹窗关闭事件
+const handleModalClose = () => {
   setTimeout(() => {
     selectedRecord.value = null
   }, 300) // 等待动画结束后清空数据
