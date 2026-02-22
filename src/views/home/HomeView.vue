@@ -179,7 +179,7 @@
 
     <!-- 下方主内容区 -->
     <main
-      class="flex-1 flex flex-col relative overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"
+      class="container mx-auto flex-1 flex flex-col relative overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"
     >
       <!-- 顶部装饰光晕 -->
       <div
@@ -201,6 +201,9 @@
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { useMessageBox } from '@/composables/useMessageBox'
+
+const msgbox = useMessageBox()
 
 const store = useUserStore()
 const router = useRouter()
@@ -217,7 +220,11 @@ const closeMenu = () => {
 }
 
 const handleLogout = () => {
-  store.logout()
-  router.push('/login')
+  msgbox.confirm('确定要退出登录吗？', '确认退出', '取消').then((confirmed) => {
+    if (confirmed) {
+      store.logout()
+      router.push('/login')
+    }
+  })
 }
 </script>

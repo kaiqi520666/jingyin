@@ -2,6 +2,7 @@ export default [
   {
     path: '/',
     name: 'home',
+    redirect: '/dashboard',
     meta: { requiresAuth: true },
     component: () => import('@/views/home/HomeView.vue'),
     children: [

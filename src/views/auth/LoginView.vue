@@ -94,10 +94,12 @@
 import { ref, reactive } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter, useRoute } from 'vue-router'
+import { useMessageStore } from '@/stores/message'
 
 const store = useUserStore()
 const router = useRouter()
 const route = useRoute()
+const messageStore = useMessageStore()
 
 // 控制当前所处模式 (登录 or 注册)
 const isLoginMode = ref(true)
@@ -116,10 +118,10 @@ const handleSubmit = () => {
     // 如果处于注册模式，需要校验密码一致性
     if (!isLoginMode.value) {
       if (form.password !== form.confirmPassword) {
-        alert('两次输入的密码不一致，请重新输入！')
+        messageStore.error('两次输入的密码不一致，请重新输入！')
         return
       }
-      alert('注册成功！系统已自动为您登录。')
+      messageStore.success('注册成功！系统已自动为您登录。')
     }
 
     // 执行登录并跳转
